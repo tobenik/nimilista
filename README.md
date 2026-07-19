@@ -2,6 +2,8 @@
 
 Nimilista is a Finnish-language name comparison app using the public search results from the [Digital and Population Data Services Agency's Name Service](https://nimipalvelu.dvv.fi/etunimihaku).
 
+Production: [zeno.neomendel.com](https://zeno.neomendel.com)
+
 ## Features
 
 - Search and compare up to eight Finnish forenames
