@@ -36,6 +36,7 @@ button:focus-visible, input:focus-visible, a:focus-visible, summary:focus-visibl
 .site-shell {
   min-height: 100vh;
   overflow: hidden;
+  isolation: isolate;
   background:
     radial-gradient(circle at 82% 8%, rgba(190, 219, 212, 0.54), transparent 28rem),
     linear-gradient(var(--paper), var(--paper));
