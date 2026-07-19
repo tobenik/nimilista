@@ -1,0 +1,78 @@
+[
+  {
+    "id": "girls",
+    "label": "Tytöt",
+    "names": [
+      "Lilja",
+      "Isla",
+      "Hilja",
+      "Livia",
+      "Adalmiina",
+      "Avila",
+      "Alva",
+      "Heinä",
+      "Hedda",
+      "Hilla",
+      "Hilda",
+      "Astrid",
+      "Tuuni",
+      "Tove",
+      "Tuua",
+      "Ruth",
+      "Alma",
+      "Frida",
+      "Louna",
+      "Siela",
+      "Sylvia",
+      "Eden",
+      "Edda",
+      "Ylva",
+      "Viena"
+    ]
+  },
+  {
+    "id": "boys",
+    "label": "Pojat",
+    "names": [
+      "Atlas",
+      "Aarni",
+      "Arvi",
+      "Alvar",
+      "Aslak",
+      "Iivar",
+      "Ivar",
+      "Ilja",
+      "Illias",
+      "Iisak",
+      "Aamos",
+      "Unto",
+      "Ohto",
+      "Oodi",
+      "Elis",
+      "Elia",
+      "Eelis",
+      "Eelia",
+      "Elja",
+      "Ahti"
+    ]
+  },
+  {
+    "id": "tobias",
+    "label": "Tobiaksen ehdotukset",
+    "names": [
+      "Neo",
+      "Plato",
+      "Mendel",
+      "Claude",
+      "Zeno",
+      "Koan",
+      "Polimarkos",
+      "Telemachos"
+    ]
+  },
+  {
+    "id": "wild",
+    "label": "Muut hullutukset",
+    "names": ["Glaukon"]
+  }
+]

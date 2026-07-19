@@ -7,6 +7,7 @@ Production: [zeno.neomendel.com](https://zeno.neomendel.com)
 ## Features
 
 - Search and compare up to eight Finnish forenames
+- Curated 54-name shortlist with a fast DVV popularity snapshot
 - Total, gender split, peak decade and decade-by-decade chart
 - Shareable comparison URLs
 - Privacy-suppressed values are preserved as “alle 5”
@@ -21,6 +22,8 @@ npm run preview
 ```
 
 The full local Pages runtime is then available at the URL printed by Wrangler. `npm run dev` starts the Vite frontend only and does not include the API Function.
+
+Refresh the committed shortlist snapshot from DVV with `npm run update:shortlist`.
 
 ## Verification
 

@@ -1,9 +1,19 @@
 import { FormEvent, useEffect, useMemo, useRef, useState } from "react";
-import type { DecadeRow, NameResult, SearchResult } from "./types";
+import shortlistNames from "../data/shortlist-names.json";
+import shortlistDvv from "./shortlist-dvv.json";
+import type {
+  DecadeRow,
+  NameResult,
+  SearchResult,
+  ShortlistCategory,
+  ShortlistSnapshot,
+} from "./types";
 
 const MAX_NAMES = 8;
 const EXAMPLES = ["Lotta", "Aino", "Väinö"];
 const numberFormatter = new Intl.NumberFormat("fi-FI");
+const SHORTLIST_CATEGORIES = shortlistNames as ShortlistCategory[];
+const SHORTLIST_DATA = shortlistDvv as ShortlistSnapshot;
 
 function formatCount(value: number | null, under = false): string {
   if (under) return `alle ${numberFormatter.format(value ?? 5)}`;
@@ -245,6 +255,107 @@ function DetailPanel({ result }: { result: NameResult }) {
   );
 }
 
+function ShortlistSection({ onOpen }: { onOpen: (name: string) => void }) {
+  const [activeId, setActiveId] = useState(SHORTLIST_CATEGORIES[0].id);
+  const activeCategory =
+    SHORTLIST_CATEGORIES.find((category) => category.id === activeId) ?? SHORTLIST_CATEGORIES[0];
+  const totalNames = SHORTLIST_CATEGORIES.reduce((total, category) => total + category.names.length, 0);
+
+  return (
+    <section className="shortlist-section" id="shortlist" aria-labelledby="shortlist-title">
+      <div className="shortlist-heading">
+        <div>
+          <span className="eyebrow">Valmiiksi kuratoitu</span>
+          <h2 id="shortlist-title">Meidän nimilista</h2>
+        </div>
+        <div className="shortlist-intro">
+          <p>{totalNames} nimeä, alkuperäisessä järjestyksessä. Avaa nimi nähdäksesi koko vuosikymmenjakauman.</p>
+          <span className="snapshot-badge"><span className="live-dot" /> DVV {SHORTLIST_DATA.updated}</span>
+        </div>
+      </div>
+
+      <div className="shortlist-tabs" role="tablist" aria-label="Nimilistan ryhmät">
+        {SHORTLIST_CATEGORIES.map((category) => (
+          <button
+            key={category.id}
+            className="shortlist-tab"
+            data-active={category.id === activeCategory.id}
+            type="button"
+            role="tab"
+            id={`shortlist-tab-${category.id}`}
+            aria-selected={category.id === activeCategory.id}
+            aria-controls="shortlist-panel"
+            onClick={() => setActiveId(category.id)}
+          >
+            <span>{category.label}</span>
+            <small>{category.names.length}</small>
+          </button>
+        ))}
+      </div>
+
+      <div
+        className="shortlist-panel"
+        id="shortlist-panel"
+        role="tabpanel"
+        aria-labelledby={`shortlist-tab-${activeCategory.id}`}
+      >
+        <div className="shortlist-columns" aria-hidden="true">
+          <span>Nimi</span>
+          <span>DVV:ssä yhteensä</span>
+          <span>Suosituin syntymäkausi</span>
+          <span>Tarkempi jakauma</span>
+        </div>
+        <div className="shortlist-rows">
+          {activeCategory.names.map((listedName, index) => {
+            const item = SHORTLIST_DATA.items[listedName.toLocaleLowerCase("fi")];
+            const isFound = item?.found === true;
+            const rowLabel = isFound
+              ? `${item.name}: ${formatCount(item.total, item.totalUnder)} henkilöä, suosituin syntymäkausi ${item.peakPeriod ?? "ei tiedossa"}`
+              : `${listedName}: ei tulosta DVV:n nimipalvelussa`;
+
+            return (
+              <button
+                className="shortlist-row"
+                data-found={isFound}
+                key={listedName}
+                type="button"
+                disabled={!isFound}
+                aria-label={rowLabel}
+                onClick={() => onOpen(listedName)}
+              >
+                <span className="shortlist-name-cell">
+                  <small>{String(index + 1).padStart(2, "0")}</small>
+                  <strong>{listedName}</strong>
+                </span>
+                {isFound ? (
+                  <>
+                    <span className="shortlist-stat">
+                      <strong>{formatCount(item.total, item.totalUnder)}</strong>
+                      <small>henkilöä</small>
+                    </span>
+                    <span className="shortlist-stat">
+                      <strong>{item.peakPeriod ?? "Ei tarkkaa tietoa"}</strong>
+                      <small>{formatCount(item.peakTotal, item.peakUnder)} nimeä</small>
+                    </span>
+                    <span className="shortlist-open">Avaa tiedot <span aria-hidden="true">→</span></span>
+                  </>
+                ) : (
+                  <>
+                    <span className="shortlist-not-found">Ei löydy DVV:stä</span>
+                    <span className="shortlist-not-found-detail">Ei julkaistua nimidataa</span>
+                    <span className="shortlist-open">–</span>
+                  </>
+                )}
+              </button>
+            );
+          })}
+        </div>
+      </div>
+      <p className="shortlist-note">“Alle” tarkoittaa DVV:n yksityisyyssuojasta johtuvaa ylärajaa. Tiedot sisältävät ensimmäiset ja muut etunimet.</p>
+    </section>
+  );
+}
+
 export default function App() {
   const [input, setInput] = useState("");
   const [results, setResults] = useState<SearchResult[]>([]);
@@ -320,6 +431,16 @@ export default function App() {
     setInput(value);
     setFormError("");
     void searchNames(EXAMPLES);
+  }
+
+  function openShortlistName(name: string) {
+    setInput(name);
+    setFormError("");
+    void searchNames([name]);
+    window.setTimeout(() => {
+      const behavior = window.matchMedia("(prefers-reduced-motion: reduce)").matches ? "auto" : "smooth";
+      document.getElementById("results-title")?.scrollIntoView({ block: "start", behavior });
+    }, 50);
   }
 
   async function copyLink() {
@@ -437,6 +558,8 @@ export default function App() {
             <span>Ensimmäiset ja muut etunimet · elävät ja kuolleet henkilöt</span>
           </section>
         )}
+
+        <ShortlistSection onOpen={openShortlistName} />
       </main>
 
       <footer className="site-footer">
